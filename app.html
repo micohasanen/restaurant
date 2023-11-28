@@ -1,0 +1,45 @@
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="results.js"></script>
+
+<div id="app">
+	<p>Yhteensä: {{ordered.length}}</p>
+	<table>
+		<thead>
+			<tr>
+				<th></th>
+				<th>Nimi</th>
+				<th>Osoite</th>
+				<th>Rating</th>
+				<th>Arvostelujen määrä</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr v-for="restaurant, i in ordered">
+				<td>{{ i + 1 }}.</td>
+				<td>{{ restaurant.name }}</td>
+				<td>{{ restaurant.formatted_address }}</td>
+				<td>{{ restaurant.rating }}</td>
+				<td>{{ restaurant.user_ratings_total }}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<script>
+  const { createApp, ref } = Vue
+
+  createApp({
+    setup() {
+      const restaurants = ref(JSON.parse(results))
+
+			const ordered = restaurants.value.filter(res => res.rating !== 0 && res.user_ratings_total >= 10).sort((a, b) => {
+				return b.rating - a.rating
+			})
+
+      return {
+        restaurants,
+				ordered
+      }
+    }
+  }).mount('#app')
+</script>
